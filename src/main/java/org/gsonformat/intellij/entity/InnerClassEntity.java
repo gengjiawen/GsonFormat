@@ -286,20 +286,23 @@ public class InnerClassEntity extends FieldEntity {
                 this.setExtra(null);
             }
             if (!filedName.equals(getKey()) || Config.getInstant().isUseSerializedName()) {
-
                 filedSb.append(Config.getInstant().geFullNameAnnotation().replaceAll("\\{filed\\}", getKey()));
             }
 
-            if (Config.getInstant().isFieldPrivateMode()) {
+            if (Config.getInstant().getAnnotationStr().equals(Strings.autoValueAnnotation)) {
+                filedSb.append(String.format("public abstract %s %s() ; ", getClassFieldType(), filedName));
+                prentClass.add(mFactory.createMethodFromText(filedSb.toString(), prentClass));
+            }else {
+                if (Config.getInstant().isFieldPrivateMode()) {
+                    filedSb.append("private  ");
+                } else {
+                    filedSb.append("public  ");
+                }
 
-                filedSb.append("private  ");
-
-            } else {
-                filedSb.append("public  ");
+                filedSb.append(getClassFieldType()).append(" ").append(filedName).append(" ; ");
+                prentClass.add(mFactory.createFieldFromText(filedSb.toString(), prentClass));
             }
 
-            filedSb.append(getClassFieldType()).append(" ").append(filedName).append(" ; ");
-            prentClass.add(mFactory.createFieldFromText(filedSb.toString(), prentClass));
         }
     }
 
